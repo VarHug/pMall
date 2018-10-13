@@ -61,7 +61,7 @@ export default {
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
 @import '~@/common/stylus/mixin.styl'
-  @import '~@/common/stylus/variable.styl'
+@import '~@/common/stylus/variable.styl'
 
 .p-header-wrap
   background rgb(252, 218, 222)

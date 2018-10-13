@@ -1,13 +1,16 @@
 <template>
   <div class="index">
     <p-header></p-header>
-    我是index首页
-    <router-view></router-view>
+    <div class="main">
+      <router-view class="main-container"></router-view>
+    </div>
+    <p-footer></p-footer>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
 import pHeader from '../components/p-header/p-header'
+import pFooter from '../components/p-footer/p-footer'
 
 export default {
   data() {
@@ -16,11 +19,17 @@ export default {
     }
   },
   components: {
-    pHeader
+    pHeader,
+    pFooter
   }
 }
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
+@import '~@/common/stylus/mixin.styl'
+
+.main
+  /.main-container
+    inner()
 
 </style>

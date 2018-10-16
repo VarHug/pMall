@@ -4,6 +4,9 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 
+// axios插件
+import Axios from 'axios'
+
 // ElementUi库
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
@@ -14,6 +17,12 @@ import '@/common/stylus/index.styl'
 Vue.config.productionTip = false
 
 Vue.use(ElementUI)
+
+Vue.prototype.$axios = Axios
+
+Vue.filter('price', (value) => {
+  return `¥${value}`
+})
 
 /* eslint-disable no-new */
 new Vue({

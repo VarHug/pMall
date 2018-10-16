@@ -1,24 +1,33 @@
 <template>
   <div class="p-header-wrap">
-    <div class="p-header">
-      <div class="logo">
-        <img width="100%" src="//img10.360buyimg.com/cms/jfs/t17752/324/262367977/74875/fd9a74db/5a65c544N9fcaf6f7.png!q90.jpg">
-      </div>
-      <div class="header-right">
-        <el-autocomplete
-          class="search"
-          v-model="input"
-          :fetch-suggestions="querySearch"
-          placeholder="请输入商品信息"
-          :trigger-on-focus="false"
-          @select="handleSelect">
-          <el-button slot="append" icon="el-icon-search"></el-button>
-        </el-autocomplete>
-        <div class="aside">
-          <div class="user"><i class="icon-mine"></i></div>
-          <div class="shop"><i class="icon-shop"></i></div>
+    <div class="p-header-container">
+      <div class="p-header">
+        <div class="logo">
+          <img width="100%" src="//img10.360buyimg.com/cms/jfs/t17752/324/262367977/74875/fd9a74db/5a65c544N9fcaf6f7.png!q90.jpg">
+        </div>
+        <div class="header-right">
+          <el-autocomplete
+            class="search"
+            v-model="input"
+            :fetch-suggestions="querySearch"
+            placeholder="请输入商品信息"
+            :trigger-on-focus="false"
+            @select="handleSelect">
+            <el-button slot="append" icon="el-icon-search"></el-button>
+          </el-autocomplete>
+          <div class="aside">
+            <div class="user"><i class="icon-mine"></i></div>
+            <div class="shop"><i class="icon-shop"></i></div>
+          </div>
         </div>
       </div>
+    </div>
+    <div class="nav-container">
+      <ul class="nav-list">
+        <li class="nav-list-item">首页</li>
+        <li class="nav-list-item">全部商品</li>
+        <li class="nav-list-item">周边商品</li>
+      </ul>
     </div>
   </div>
 </template>
@@ -63,7 +72,7 @@ export default {
 @import '~@/common/stylus/mixin.styl'
 @import '~@/common/stylus/variable.styl'
 
-.p-header-wrap
+.p-header-container
   background rgb(252, 218, 222)
   /.p-header
     inner()
@@ -94,5 +103,18 @@ export default {
           cursor pointer
         .user
           margin 0 10px
-
+.nav-container
+  padding 10px 0
+  border-bottom 2px solid $color-border
+  background #fff
+  /.nav-list
+    inner()
+    font-size 0
+    /.nav-list-item
+      display inline-block
+      vertical-align top
+      margin-right 15px
+      height 40px
+      line-height 40px
+      font-size $font-size-medium
 </style>

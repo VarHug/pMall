@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Index from '../pages/index.vue'
 import Home from '../pages/home/home.vue'
+import Goods from '../pages/goods/goods.vue'
 Vue.use(Router)
 
 export default new Router({
@@ -15,6 +16,10 @@ export default new Router({
         {
           path: '/home',
           component: Home
+        },
+        {
+          path: '/goods',
+          component: Goods
         }
       ]
     }

@@ -24,9 +24,9 @@
     </div>
     <div class="nav-container">
       <ul class="nav-list">
-        <li class="nav-list-item">首页</li>
-        <li class="nav-list-item">全部商品</li>
-        <li class="nav-list-item">周边商品</li>
+        <li class="nav-list-item" :class="{'active': pageId === 0}" @click="changePage(0)">首页</li>
+        <li class="nav-list-item" :class="{'active': pageId === 1}" @click="changePage(1)">全部商品</li>
+        <li class="nav-list-item" :class="{'active': pageId === 2}" @click="changePage(2)">周边商品</li>
       </ul>
     </div>
   </div>
@@ -37,10 +37,27 @@ export default {
   data() {
     return {
       restaurants: [],
-      input: ''
+      input: '',
+      pageId: 0
     }
   },
   methods: {
+    changePage(pageId) {
+      this.pageId = pageId
+      switch (pageId) {
+        case 0:
+          this.$router.push('/home')
+          break
+        case 1:
+          this.$router.push('/goods')
+          break
+        case 2:
+          this.$router.push('/goods?type=2')
+          break
+        default:
+          break
+      }
+    },
     querySearch(queryString, cb) {
       var restaurants = this.restaurants
       var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants
@@ -60,10 +77,26 @@ export default {
         {value: '小米6'},
         {value: 'iPhoneX'}
       ]
+    },
+    _initPageId() {
+      switch (this.$route.fullPath) {
+        case '/home':
+          this.pageId = 0
+          break
+        case '/goods':
+          this.pageId = 1
+          break
+        case '/goods?type=2':
+          this.pageId = 2
+          break
+        default:
+          break
+      }
     }
   },
   mounted() {
     this.restaurants = this.loadAll()
+    this._initPageId()
   }
 }
 </script>
@@ -117,4 +150,8 @@ export default {
       height 40px
       line-height 40px
       font-size $font-size-medium
+      cursor pointer
+      &.active
+        color #FF0077
+        font-weight 400
 </style>

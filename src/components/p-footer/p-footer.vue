@@ -71,10 +71,8 @@ export default {
     }
   },
   created() {
-    this.$nextTick(() => {
-      this.helper = this._loadHelper()
-      this.info = this._loadInfo()
-    })
+    this.helper = this._loadHelper()
+    this.info = this._loadInfo()
   }
 }
 </script>

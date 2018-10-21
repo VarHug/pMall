@@ -125,11 +125,9 @@ export default {
     }
   },
   created() {
-    this.$nextTick(() => {
-      this.sliderData = this._loadSliderData()
-      this._loadPhoneData()
-      this._loadOtherData()
-    })
+    this.sliderData = this._loadSliderData()
+    this._loadPhoneData()
+    this._loadOtherData()
   },
   components: {
 
@@ -202,6 +200,10 @@ export default {
           height 300px
           margin-right 2%
           background #fff
+          transition all .5s
+          &:hover
+            transform translateY(-3px)
+            box-shadow 1px 1px 20px #ffa1b8
           .pic
             margin 0 auto
             width 220px

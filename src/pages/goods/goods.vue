@@ -99,6 +99,7 @@ export default {
 <style scoped lang="stylus" rel="stylesheet/stylus">
 
 .goods
+  padding-bottom 70px
   overflow hidden
   .gl
     margin-top 20px
@@ -108,5 +109,8 @@ export default {
       vertical-align top
       width 20%
   .el-pagination
-    text-align center
+    position absolute
+    bottom 20px
+    left 50%
+    transform translateX(-50%)
 </style>

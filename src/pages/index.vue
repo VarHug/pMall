@@ -28,8 +28,14 @@ export default {
 <style scoped lang="stylus" rel="stylesheet/stylus">
 @import '~@/common/stylus/mixin.styl'
 
-.main
-  /.main-container
-    inner()
+.index
+  display flex
+  flex-flow column
+  min-height 100vh
+  .main
+    flex 1
+    position relative
+    /.main-container
+      inner()
 
 </style>

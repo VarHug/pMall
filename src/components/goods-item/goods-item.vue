@@ -1,7 +1,7 @@
 <template>
   <div class="gl-i-wrap">
     <div class="p-img">
-      <a target="_blank" :title="glItem.pTitle">
+      <a target="_blank" :title="glItem.pTitle" @click="openGoodsDetail(glItem.pid)">
         <img width="220" height="220" ref="pImg" :src="getPimg">
       </a>
     </div>
@@ -13,8 +13,7 @@
               href="javascript:;"
               :title="psItem.title"
               :class="{'curr': type === index}"
-              @mouseover.stop.prevent="changeCategory(index)"
-              >
+              @mouseover.stop.prevent="changeCategory(index)">
               <img width="25" height="25" :src="psItem.picN9">
             </a>
           </li>
@@ -23,7 +22,7 @@
     </div>
     <div class="p-price">{{glItem.pPrice | price}}</div>
     <div class="p-name">
-      <a target="_blank" :title="glItem.pTitle">{{glItem.pName}}</a>
+      <a target="_blank" :title="glItem.pTitle" @click="openGoodsDetail(glItem.pid)">{{glItem.pName}}</a>
     </div>
     <div class="p-shop">{{glItem.seller}}</div>
   </div>
@@ -50,6 +49,9 @@ export default {
   methods: {
     changeCategory(index) {
       this.type = index
+    },
+    openGoodsDetail(productId) {
+      window.open(`//${window.location.host}/#/goodsDetail?productId=${productId}`)
     }
   }
 }
@@ -69,6 +71,8 @@ export default {
     box-shadow 1px 1px 20px #ffa1b8
   .p-img
     margin-bottom 5px
+    a
+      display block
   .p-scroll
     margin-bottom 10px
     .ps-wrap

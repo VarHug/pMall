@@ -11,6 +11,9 @@ import Axios from 'axios'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 
+// Vuex状态管理
+import store from './store'
+
 // 基础样式
 import '@/common/stylus/index.styl'
 
@@ -28,6 +31,7 @@ Vue.filter('price', (value) => {
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })

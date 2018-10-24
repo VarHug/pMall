@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Index from '../pages/index.vue'
 import Home from '../pages/home/home.vue'
 import Goods from '../pages/goods/goods.vue'
+import Login from '../pages/login/login.vue'
 import GoodsDetail from '../components/goods-detail/goods-detail.vue'
 Vue.use(Router)
 
@@ -28,6 +29,10 @@ export default new Router({
           component: GoodsDetail
         }
       ]
+    },
+    {
+      path: '/login',
+      component: Login
     }
   ]
 })

@@ -16,7 +16,7 @@
             <el-button slot="append" icon="el-icon-search"></el-button>
           </el-autocomplete>
           <div class="aside">
-            <div class="user"><i class="icon-mine"></i></div>
+            <div class="user" @click="login"><i class="icon-mine"></i></div>
             <div class="shop"><i class="icon-shop"></i></div>
           </div>
         </div>
@@ -33,6 +33,8 @@
 </template>
 
 <script type="text/ecmascript-6">
+import {mapGetters} from 'vuex'
+
 export default {
   data() {
     return {
@@ -40,6 +42,11 @@ export default {
       input: '',
       pageId: 0
     }
+  },
+  computed: {
+    ...mapGetters([
+      'isLogin'
+    ])
   },
   methods: {
     changePage(pageId) {
@@ -71,6 +78,12 @@ export default {
     },
     handleSelect(item) {
       console.log(item)
+    },
+    // 登录
+    login() {
+      if (!this.isLogin) {
+        this.$router.push('/login')
+      }
     },
     loadAll() {
       return [

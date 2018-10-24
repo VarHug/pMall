@@ -1,5 +1,5 @@
 const state = {
-  login: false, // 用户是否登录
+  isLogin: false, // 用户是否登录
   cartList: [] // 购物车列表
 }
 

@@ -53,6 +53,11 @@ export default {
     openGoodsDetail(productId) {
       window.open(`//${window.location.host}/#/goodsDetail?productId=${productId}`)
     }
+  },
+  watch: {
+    glItem(newVal, oldVal) {
+      this.type = 0
+    }
   }
 }
 </script>

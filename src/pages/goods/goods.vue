@@ -1,7 +1,7 @@
 <template>
-  <div class="goods" v-if="goods.length">
+  <div class="goods" v-if="goodsList.length">
     <ul class="gl" v-loading="loading" element-loading-text="拼命加载中">
-      <li class="gl-item" v-for="(glItem, index) in goods" :key="index">
+      <li class="gl-item" v-for="(glItem, index) in goodsList" :key="index">
         <goods-item :glItem='glItem'></goods-item>
       </li>
     </ul>
@@ -26,49 +26,47 @@ export default {
   data() {
     return {
       temp: [], // mook数据阶段暂时存储所有goods
-      goods: [],
+      goodsList: [],
       loading: true,
       total: 0,
       pageSizes: [10, 20, 40, 80],
       pageSize: 10,
       currentPage: 1,
-      sin: 0, // 起始条目数
-      ein: 10 // 结束条目数
+      type: 0
     }
   },
   methods: {
     handleSizeChange(pageSize) {
       this.pageSize = pageSize
       this.currentPage = 1
-      // while (this.currentPage * this.pageSize > this.total && this.currentPage > 1) {
-      //   this.currentPage--
-      // }
-      this.sin = (this.currentPage - 1) * this.pageSize
-      this.ein = this.currentPage * this.pageSize
       this.loading = true
-      this._loadGoods()
+      this._getGoodsList()
     },
     handleCurrentChange(currentPage) {
       this.currentPage = currentPage
-      this.sin = (this.currentPage - 1) * this.pageSize
-      this.ein = this.currentPage * this.pageSize
       this.loading = true
-      this._loadGoods()
+      this.$route.query.page = this.currentPage
+      this.$route.query.pageSize = this.pageSize
+      this._getGoodsList()
     },
-    _loadGoods() {
-      this.$axios.get('/api/phone').then(res => {
-        if (res.data.errno === ERR_OK) {
-          this.temp = res.data.data
+    _getGoodsList() {
+      // 滚动回商品列表起始处
+      this._scrollToGl()
+      let param = {
+        page: this.currentPage,
+        pageSize: this.pageSize,
+        type: this.type
+      }
+      this.$axios.get('/api/good', {
+        params: param
+      }).then(res => {
+        if (res.data.status === ERR_OK) {
+          // 设置商品列表
+          this.goodsList = res.data.result.list
+          // 设置element组件相关信息
+          this.total = res.data.result.totalCount
+          this.loading = false
         }
-        this.$axios.get('/api/other').then(res => {
-          if (res.data.errno === ERR_OK) {
-            this.temp = this.temp.concat(res.data.data)
-            this.total = this.temp.length
-            this.goods = this.temp.slice(this.sin, this.ein)
-            this.loading = false
-            this._scrollToGl()
-          }
-        })
       })
     },
     _scrollToGl() {
@@ -83,11 +81,14 @@ export default {
     }
   },
   created() {
-    this._loadGoods()
+    this.type = this.$route.query.type ? parseInt(this.$route.query.type) : 0
+    this._getGoodsList()
   },
   watch: {
     '$route' (to, from) {
-
+      this.type = to.query.type ? parseInt(to.query.type) : 0
+      this.currentPage = 1
+      this._getGoodsList()
     }
   },
   components: {

@@ -23,7 +23,7 @@
       </div>
       <div class="list-box">
         <ul class="list">
-          <li class="list-item" v-for="(item, index) in phoneData" :key="index">
+          <li class="list-item" v-for="(item, index) in phoneList" :key="index">
             <div class="pic"><img :src="item.image"></div>
             <h3 class="title">{{item.name}}</h3>
             <p class="desc">{{item.desc}}</p>
@@ -49,7 +49,7 @@
       </div>
       <div class="list-box">
         <ul class="list">
-          <li class="list-item" v-for="(item, index) in otherData" :key="index">
+          <li class="list-item" v-for="(item, index) in otherList" :key="index">
             <div class="pic"><img :src="item.image"></div>
             <h3 class="title">{{item.name}}</h3>
             <p class="desc">{{item.desc}}</p>
@@ -68,8 +68,8 @@ export default {
   data() {
     return {
       sliderData: [],
-      phoneData: [],
-      otherData: []
+      phoneList: [],
+      otherList: []
     }
   },
   methods: {
@@ -97,17 +97,31 @@ export default {
         }
       ]
     },
-    _loadPhoneData() {
-      this.$axios.get('/api/phone').then(res => {
-        if (res.data.errno === ERR_OK) {
-          this.phoneData = this._formatData(res.data.data.splice(0, 8))
+    _getPhoneList() {
+      let param = {
+        page: 1,
+        pageSize: 8,
+        type: 1
+      }
+      this.$axios.get('/api/good', {
+        params: param
+      }).then(res => {
+        if (res.data.status === ERR_OK) {
+          this.phoneList = this._formatData(res.data.result.list)
         }
       })
     },
-    _loadOtherData() {
-      this.$axios.get('/api/other').then(res => {
-        if (res.data.errno === ERR_OK) {
-          this.otherData = this._formatData(res.data.data.splice(0, 8))
+    _getOtherList() {
+      let param = {
+        page: 1,
+        pageSize: 8,
+        type: 2
+      }
+      this.$axios.get('/api/good', {
+        params: param
+      }).then(res => {
+        if (res.data.status === ERR_OK) {
+          this.otherList = this._formatData(res.data.result.list)
         }
       })
     },
@@ -126,8 +140,8 @@ export default {
   },
   created() {
     this.sliderData = this._loadSliderData()
-    this._loadPhoneData()
-    this._loadOtherData()
+    this._getPhoneList()
+    this._getOtherList()
   },
   components: {
 

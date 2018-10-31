@@ -36,7 +36,7 @@
         </div>
         <div class="goods-buy">
           <a href="javascript:;" class="buy-btn buy-now">立刻购买</a>
-          <a href="javascript:;" class="buy-btn buy-cart" @click="addCart">加入购物车</a>
+          <a href="javascript:;" class="buy-btn buy-cart" @click="addCart(product)">加入购物车</a>
         </div>
       </div>
     </div>
@@ -58,6 +58,7 @@
 <script type="text/ecmascript-6">
 import {prefix} from '../../common/js/dom.js'
 import {ERR_OK} from '../../api/config.js'
+import {mapActions} from 'vuex'
 
 const transform = prefix('transform')
 const transition = prefix('transition')
@@ -85,6 +86,9 @@ export default {
     }
   },
   methods: {
+    ...mapActions([
+      'saveCartList'
+    ]),
     changePreview(index) {
       this.previewIndex = index
     },
@@ -101,10 +105,12 @@ export default {
       }
     },
     handleChange(val) {
-      console.log(val)
+      console.log(`val is: ${val}`)
+      console.log(`num is: ${this.num}`)
     },
-    addCart() {
+    addCart(product) {
       if (!this.isAnimation) {
+        // 动画相关
         this.isAnimation = true
         // 获取按钮元素
         let dom = event.target
@@ -118,7 +124,17 @@ export default {
           shopLeft,
           shopTop
         }
-        console.log(this.animationOpts)
+        // console.log(this.animationOpts)
+        // 购物车数据相关
+        let goodInfo = {}
+        // console.log(product)
+        goodInfo.pid = product.pid
+        goodInfo.name = product.pName
+        goodInfo.price = product.pPrice
+        goodInfo.image = product.preview[0].small
+        goodInfo.num = this.num
+        // console.log(goodInfo)
+        this.saveCartList(goodInfo)
       }
     },
     beforeEnter(ele) {
@@ -152,7 +168,6 @@ export default {
       }).then(res => {
         if (res.data.status === ERR_OK) {
           this.product = res.data.result.list[0]
-          console.log(this.product)
           this.$nextTick(() => {
             this._setLh()
           })
@@ -288,8 +303,8 @@ export default {
 
 .animation-wrap
   position fixed
-  top 5px
-  left 1510px
+  top 2px
+  left 1520px
   width 45px
   height 45px
   z-index 10

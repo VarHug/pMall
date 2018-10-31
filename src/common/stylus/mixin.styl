@@ -44,6 +44,14 @@ extend-click()
     right: -10px
     bottom: -10px
 
+// 清除浮动
+clearfix()
+  *zoom: 1
+  &:after
+    display table
+    content: ''
+    clear both
+
 inner()
   margin 0 auto
   width 1200px

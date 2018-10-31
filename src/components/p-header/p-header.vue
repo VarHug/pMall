@@ -17,7 +17,42 @@
           </el-autocomplete>
           <div class="aside">
             <div class="user" @click="login"><i class="icon-mine"></i></div>
-            <div class="shop"><i class="icon-shop"></i></div>
+            <div class="shop">
+              <i class="icon-shop"></i>
+              <i class="icon-count">{{getGoodsCount}}</i>
+              <div class="dorpdown">
+                <div class="spacer"></div>
+                <div class="settleup-content">
+                  <div class="smt">
+                    <h4 class="title">最新加入的商品</h4>
+                  </div>
+                  <div class="smc">
+                    <ul class="mcart">
+                      <li class="mcart-item" v-for="(good, index) in cartList" :key="index">
+                        <div class="p-img">
+                          <a href=""><img width="50" height="50" :src="good.image"></a>
+                        </div>
+                        <div class="p-name">
+                          <a href="" :title="good.name">{{good.name}}</a>
+                        </div>
+                        <div class="p-detail">
+                          <span class="p-price">{{good.price | price}} × {{good.num}}</span>
+                          <br>
+                          <span class="delete" @click="deleteGood(good.pid)">删除</span>
+                        </div>
+                      </li>
+                      <div class="mcart-item" v-show="cartList.length === 0">购物车中还没有商品，赶紧选购吧！</div>
+                    </ul>
+                  </div>
+                  <div class="smb">
+                    <div class="p-total">
+                      共<b>{{getGoodsCount}}</b>件商品 共计<strong>{{getTotalPrice | price}}</strong>
+                    </div>
+                    <a href="javascript:;" title="去购物车" class="btn-payforgoods">去购物车</a>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -33,7 +68,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-import {mapGetters} from 'vuex'
+import {mapGetters, mapActions} from 'vuex'
 
 export default {
   data() {
@@ -44,11 +79,29 @@ export default {
     }
   },
   computed: {
+    getGoodsCount() {
+      let num = 0
+      this.cartList.forEach(good => {
+        num += good.num
+      })
+      return num
+    },
+    getTotalPrice() {
+      let totalPrice = 0
+      this.cartList.forEach(good => {
+        totalPrice += good.num * good.price
+      })
+      return totalPrice
+    },
     ...mapGetters([
-      'isLogin'
+      'isLogin',
+      'cartList'
     ])
   },
   methods: {
+    ...mapActions([
+      'removeCartList'
+    ]),
     changePage(pageId) {
       this.pageId = pageId
       switch (pageId) {
@@ -91,6 +144,9 @@ export default {
         {value: 'iPhoneX'}
       ]
     },
+    deleteGood(pid) {
+      this.removeCartList(pid)
+    },
     _initPageId() {
       switch (this.$route.fullPath) {
         case '/home':
@@ -121,9 +177,9 @@ export default {
 .p-header-container
   background rgb(252, 218, 222)
   /.p-header
-    inner()
     position relative
-    overflow hidden
+    inner()
+    clearfix()
     .logo
       position absolute
       top 50%
@@ -146,9 +202,100 @@ export default {
           padding 15px
           line-height 22px
           font-size $font-size-large-x
-          cursor pointer
         .user
           margin 0 10px
+        .shop
+          position relative
+          border 1px solid #ddd
+          &:hover
+            background #fff
+            box-shadow 0 0 5px rgba(0,0,0,.2)
+            .dorpdown
+              display block
+          .icon-count
+            display inline-block
+            width 16px
+            height 16px
+            position absolute
+            top 15px
+            right 0
+            z-index 100
+            text-align center
+            line-height 16px
+            font-size $font-size-small-s
+            color #fff
+            background #da1026
+            border-radius 50%
+          /.dorpdown
+            display none
+            width 308px
+            position absolute
+            top 100%
+            right -1px
+            z-index 10
+            background #fff
+            border 1px solid #ddd
+            box-shadow 0 0 5px rgba(0,0,0,.2)
+            .spacer
+              position absolute
+              top -6px
+              right 0
+              width 52px
+              height 12px
+              background #fff
+            .settleup-content
+              font-size $font-size-small
+              .smt
+                height 25px
+                padding 6px 8px
+                line-height 25px
+              .smc
+                height auto!important
+                max-height 344px
+                overflow-y auto
+                .mcart
+                  .mcart-item
+                    padding 8px 10px
+                    border-top 1px dotted #cccccc
+                    line-height 17px
+                    overflow hidden
+                    .p-img
+                      float left
+                      width 50px
+                      height 50px
+                      border 1px solid #ddd
+                      padding 0
+                      margin-right 10px
+                      font-size 0
+                    .p-name
+                      float left
+                      width 120px
+                      height 52px
+                      overflow hidden
+                    .p-detail
+                      float right
+                      text-align right
+                      .p-price
+                        font-weight 700
+                      .delete
+                        cursor pointer
+              .smb
+                padding 8px
+                background #f5f5f5
+                overflow hidden
+                .p-total
+                  float left
+                  line-height 29px
+                .btn-payforgoods
+                  float right
+                  height 29px
+                  line-height 29px
+                  padding 0 10px
+                  text-align center
+                  color #fff
+                  font-weight 700
+                  background #E4393C
+                  border-radius 3px
 .nav-container
   padding 10px 0
   border-bottom 2px solid $color-border

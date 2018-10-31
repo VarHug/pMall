@@ -51,7 +51,7 @@ export default {
       this.type = index
     },
     openGoodsDetail(productId) {
-      window.open(`//${window.location.host}/#/goodsDetail?productId=${productId}`)
+      this.$router.push(`/goodsDetail?productId=${productId}`)
     }
   },
   watch: {

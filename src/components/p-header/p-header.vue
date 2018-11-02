@@ -69,6 +69,8 @@
 
 <script type="text/ecmascript-6">
 import {mapGetters, mapActions} from 'vuex'
+import {ERR_OK} from '../../api/config'
+import {loadCartList} from '../../common/js/cache.js'
 
 export default {
   data() {
@@ -95,12 +97,14 @@ export default {
     },
     ...mapGetters([
       'isLogin',
-      'cartList'
+      'cartList',
+      'user'
     ])
   },
   methods: {
     ...mapActions([
-      'removeCartList'
+      'removeCartList',
+      'initCartList'
     ]),
     changePage(pageId) {
       this.pageId = pageId
@@ -161,7 +165,27 @@ export default {
         default:
           break
       }
+    },
+    _initCartList() {
+      if (this.isLogin) {
+        // 登录，从数据库获取数据并提交vuex管理
+        let param = {
+          uid: this.user.uid
+        }
+        this.$axios.get('/api/user/getCartList', {
+          params: param
+        }).then(res => {
+          if (res.data.status === ERR_OK) {
+            this.initCartList(res.data.result.cartList)
+          }
+        })
+      } else {
+        this.initCartList(loadCartList())
+      }
     }
+  },
+  created() {
+    this._initCartList()
   },
   mounted() {
     this.restaurants = this.loadAll()

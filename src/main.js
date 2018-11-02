@@ -27,6 +27,14 @@ Vue.filter('price', (value) => {
   return `¥${value}`
 })
 
+router.beforeEach((to, from, next) => {
+  if (to.fullPath.substring(0, 1) !== '/') {
+    next('/home')
+  } else {
+    next()
+  }
+})
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

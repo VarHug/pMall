@@ -58,7 +58,7 @@
 <script type="text/ecmascript-6">
 import {prefix} from '../../common/js/dom.js'
 import {ERR_OK} from '../../api/config.js'
-import {mapActions} from 'vuex'
+import {mapActions, mapGetters} from 'vuex'
 
 const transform = prefix('transform')
 const transition = prefix('transition')
@@ -81,6 +81,10 @@ export default {
     }
   },
   computed: {
+    ...mapGetters([
+      'isLogin',
+      'cartList'
+    ]),
     getMainImg() {
       return this.product.preview[this.previewIndex].large
     }
@@ -125,15 +129,14 @@ export default {
           shopTop
         }
         // console.log(this.animationOpts)
-        // 购物车数据相关
-        let goodInfo = {}
-        // console.log(product)
-        goodInfo.pid = product.pid
-        goodInfo.name = product.pName
-        goodInfo.price = product.pPrice
-        goodInfo.image = product.preview[0].small
-        goodInfo.num = this.num
-        // console.log(goodInfo)
+        // 产品数据相关
+        let goodInfo = {
+          pid: product.pid,
+          name: product.pName,
+          price: product.pPrice,
+          image: product.preview[0].small,
+          num: this.num
+        }
         this.saveCartList(goodInfo)
       }
     },

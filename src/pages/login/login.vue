@@ -23,24 +23,91 @@
 
 <script type="text/ecmascript-6">
 import pFooter from '../../components/p-footer/p-footer'
+import {ERR_OK} from '../../api/config.js'
+import {mapActions, mapGetters, mapMutations} from 'vuex'
+import storage from 'good-storage'
+
+const CART_LIST_KEY = '__cartList__'
 
 export default {
   data() {
     return {
       account: '',
-      password: ''
+      password: '',
+      isFromRouter: true
     }
   },
   computed: {
+    ...mapGetters([
+      'cartList'
+    ]),
     canSub() {
       return this.account && this.password
     }
   },
   methods: {
+    ...mapActions([
+      'setLogState',
+      'setUserInfo'
+    ]),
+    ...mapMutations({
+      'setCartList': 'SET_CART_LIST'
+    }),
     login() {
       if (this.canSub) {
-        console.log('submit account')
+        let param = {
+          uid: this.account,
+          pwd: this.password
+        }
+        this.$axios.get('/api/user', {
+          params: param
+        }).then(res => {
+          if (res.data.status === ERR_OK) {
+            this.$notify({
+              title: '登录成功',
+              message: '',
+              type: 'success'
+            })
+            let user = res.data.result
+            this.setLogState(true)
+            this.setUserInfo(user)
+            if (this.cartList.length > 0) {
+              let param = {
+                uid: this.account,
+                goodsList: JSON.stringify(this.cartList)
+              }
+              this.$axios.get('/api/user/concatCartList', {
+                params: param
+              }).then(res => {
+                if (res.data.status === ERR_OK) {
+                  // 设置vuex合并后的购物车
+                  this.setCartList(res.data.result.cartList)
+                  // 清空localstorage购物车
+                  storage.set(CART_LIST_KEY, [])
+                }
+              })
+            }
+            this.isFromRouter ? this.$router.back() : this.$router.push('/home')
+          } else {
+            this.$notify({
+              title: '登录失败',
+              message: '您输入的帐号或者密码有误',
+              type: 'error'
+            })
+          }
+        })
       }
+    }
+  },
+  beforeRouteEnter(to, from, next) {
+    if (from.fullPath === '/') {
+      next(vm => {
+        vm.isFromRouter = false
+      })
+    } else {
+      next(vm => {
+        vm.isFromRouter = true
+      })
     }
   },
   components: {

@@ -16,11 +16,23 @@
             <el-button slot="append" icon="el-icon-search"></el-button>
           </el-autocomplete>
           <div class="aside">
-            <div class="user" @click="login"><i class="icon-mine"></i></div>
+            <div class="user" @click="login">
+              <i class="icon-mine"></i>
+              <div class="dropdown du" v-if="user && user.uid">
+                <div class="spacer"></div>
+                <div class="user-detail">
+                  <div class="avatar">
+                    <img width="100%" height="100%" :src="user.avatar">
+                  </div>
+                  <div class="name">欢迎您，<strong>{{user.name}}</strong></div>
+                  <div class="exit" @click.stop="logout">退出</div>
+                </div>
+              </div>
+            </div>
             <div class="shop">
               <i class="icon-shop"></i>
               <i class="icon-count">{{getGoodsCount}}</i>
-              <div class="dorpdown">
+              <div class="dropdown ds">
                 <div class="spacer"></div>
                 <div class="settleup-content">
                   <div class="smt">
@@ -104,7 +116,9 @@ export default {
   methods: {
     ...mapActions([
       'removeCartList',
-      'initCartList'
+      'initCartList',
+      'setLogState',
+      'setUserInfo'
     ]),
     changePage(pageId) {
       this.pageId = pageId
@@ -141,6 +155,14 @@ export default {
       if (!this.isLogin) {
         this.$router.push('/login')
       }
+    },
+    logout() {
+      // 设置登录状态为登出
+      this.setLogState(false)
+      // 设置用户信息为空
+      this.setUserInfo({})
+      // 设置购物车为空
+      this.initCartList([])
     },
     loadAll() {
       return [
@@ -223,34 +245,11 @@ export default {
         .user, .shop
           display inline-block
           vertical-align top
+          position relative
           padding 15px
           line-height 22px
           font-size $font-size-large-x
-        .user
-          margin 0 10px
-        .shop
-          position relative
-          border 1px solid #ddd
-          &:hover
-            background #fff
-            box-shadow 0 0 5px rgba(0,0,0,.2)
-            .dorpdown
-              display block
-          .icon-count
-            display inline-block
-            width 16px
-            height 16px
-            position absolute
-            top 15px
-            right 0
-            z-index 100
-            text-align center
-            line-height 16px
-            font-size $font-size-small-s
-            color #fff
-            background #da1026
-            border-radius 50%
-          /.dorpdown
+          /.dropdown
             display none
             width 308px
             position absolute
@@ -267,6 +266,49 @@ export default {
               width 52px
               height 12px
               background #fff
+          &:hover
+            background #fff
+            box-shadow 0 0 5px rgba(0,0,0,.2)
+            .dropdown
+              display block
+        .user
+          margin 0 10px
+          .du
+            box-sizing border-box
+            padding 10px 15px
+            .user-detail
+              overflow hidden
+              .avatar
+                float left
+                margin-right 10px
+                width 75px
+                height 75px
+                img
+                  border-radius 50%
+              .name
+                float left
+                font-size $font-size-medium-x
+              .exit
+                float right
+                font-size $font-size-small
+                cursor pointer
+                extend-click()
+        .shop
+          .icon-count
+            display inline-block
+            width 16px
+            height 16px
+            position absolute
+            top 15px
+            right 0
+            z-index 100
+            text-align center
+            line-height 16px
+            font-size $font-size-small-s
+            color #fff
+            background #da1026
+            border-radius 50%
+          .ds
             .settleup-content
               font-size $font-size-small
               .smt

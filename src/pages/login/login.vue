@@ -48,7 +48,8 @@ export default {
   methods: {
     ...mapActions([
       'setLogState',
-      'setUserInfo'
+      'setUserInfo',
+      'initCartList'
     ]),
     ...mapMutations({
       'setCartList': 'SET_CART_LIST'
@@ -72,6 +73,7 @@ export default {
             this.setLogState(true)
             this.setUserInfo(user)
             if (this.cartList.length > 0) {
+              // 如果存在本地购物车则合并
               let param = {
                 uid: this.account,
                 goodsList: JSON.stringify(this.cartList)
@@ -84,6 +86,18 @@ export default {
                   this.setCartList(res.data.result.cartList)
                   // 清空localstorage购物车
                   storage.set(CART_LIST_KEY, [])
+                }
+              })
+            } else {
+              // 不存在本地购物车，则获取数据库中的购物车
+              let param = {
+                uid: this.account
+              }
+              this.$axios.get('/api/user/getCartList', {
+                params: param
+              }).then(res => {
+                if (res.data.status === ERR_OK) {
+                  this.initCartList(res.data.result.cartList)
                 }
               })
             }

@@ -109,8 +109,8 @@ export default {
       }
     },
     handleChange(val) {
-      console.log(`val is: ${val}`)
-      console.log(`num is: ${this.num}`)
+      // console.log(`val is: ${val}`)
+      // console.log(`num is: ${this.num}`)
     },
     addCart(product) {
       if (!this.isAnimation) {

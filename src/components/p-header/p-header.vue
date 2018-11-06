@@ -60,7 +60,7 @@
                     <div class="p-total">
                       共<b>{{getGoodsCount}}</b>件商品 共计<strong>{{getTotalPrice | price}}</strong>
                     </div>
-                    <a href="javascript:;" title="去购物车" class="btn-payforgoods">去购物车</a>
+                    <a href="javascript:;" title="去购物车" class="btn-payforgoods" @click="toCart">去购物车</a>
                   </div>
                 </div>
               </div>
@@ -163,6 +163,20 @@ export default {
       this.setUserInfo({})
       // 设置购物车为空
       this.initCartList([])
+    },
+    toCart() {
+      if (this.isLogin) {
+        // 登录，则去购物车页面
+        this.$router.push('/cart')
+      } else {
+        // 未登录，去登录页面
+        this.$notify({
+          title: '请先登录',
+          message: '',
+          type: 'warning'
+        })
+        this.$router.push('/login')
+      }
     },
     loadAll() {
       return [

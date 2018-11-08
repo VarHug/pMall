@@ -9,6 +9,9 @@ const mutations = {
   },
   [types.SET_USER](state, user) {
     state.user = user
+  },
+  [types.SET_CHECKED_LIST](state, list) {
+    state.checkedList = list
   }
 }
 

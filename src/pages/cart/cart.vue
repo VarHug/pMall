@@ -16,7 +16,7 @@
         <ul class="cart-list" v-if="cartList.length > 0">
           <el-row class="cli" v-for="(good, index) in cartList" :key="index">
             <el-col :span="1">
-              <el-checkbox class="checkbox cli-cbox" @change="handleCheckedGoodsChange" ref="checkGoods" v-model="checkedGoods[index]"></el-checkbox>
+              <el-checkbox class="checkbox cli-cbox" @change="handleCheckedGoodsChange" ref="checkGoods" v-model="checkedState[index]"></el-checkbox>
             </el-col>
             <el-col :span="11">
               <div class="good-item">
@@ -46,7 +46,7 @@
           <div class="options-box">
             <div class="toolbar-right">
               <div class="btn-area">
-                <a class="submit-btn" href="javascript:void(0);">去结算<b></b></a>
+                <a class="submit-btn" href="javascript:void(0);" @click="toCheckout">去结算<b></b></a>
               </div>
               <div class="price-sum">
                 <span class="txt">总价：</span>
@@ -71,13 +71,13 @@
 <script type="text/ecmascript-6">
 import logoHeader from '../../components/logo-header/logo-header'
 import pFooter from '../../components/p-footer/p-footer'
-import {mapGetters, mapActions} from 'vuex'
+import {mapGetters, mapActions, mapMutations} from 'vuex'
 import {ERR_OK} from '../../api/config'
 
 export default {
   data() {
     return {
-      checkedGoods: [],
+      checkedState: [],
       isCheckAll: false,
       goodsnum: []
     }
@@ -95,6 +95,9 @@ export default {
       'initCartList',
       'removeCartList'
     ]),
+    ...mapMutations({
+      setCheckedList: 'SET_CHECKED_LIST'
+    }),
     getImage(good) {
       let regExp = /s54x54/
       return good.image.replace(regExp, 's80x80')
@@ -102,12 +105,12 @@ export default {
     handleCheckAllChange(val) {
       this.isCheckAll = val
       for (let i = 0; i < this.cartList.length; i++) {
-        this.checkedGoods[i] = val
+        this.checkedState[i] = val
       }
     },
     handleCheckedGoodsChange(val) {
       for (let i = 0; i < this.cartList.length; i++) {
-        if (!this.checkedGoods[i]) {
+        if (!this.checkedState[i]) {
           this.isCheckAll = false
           return
         }
@@ -126,9 +129,9 @@ export default {
     },
     getCheckedTotalPrice() {
       let totalPrice = 0
-      let checkedGoods = this.checkedGoods
-      for (let i = 0, len = checkedGoods.length; i < len; i++) {
-        if (checkedGoods[i]) {
+      let checkedState = this.checkedState
+      for (let i = 0, len = checkedState.length; i < len; i++) {
+        if (checkedState[i]) {
           totalPrice += this.cartList[i].num * this.cartList[i].price
         }
       }
@@ -136,13 +139,31 @@ export default {
     },
     getCheckedTotalAmount() {
       let totalAmount = 0
-      let checkedGoods = this.checkedGoods
-      for (let i = 0, len = checkedGoods.length; i < len; i++) {
-        if (checkedGoods[i]) {
+      let checkedState = this.checkedState
+      for (let i = 0, len = checkedState.length; i < len; i++) {
+        if (checkedState[i]) {
           totalAmount += this.cartList[i].num
         }
       }
       return totalAmount
+    },
+    toCheckout() {
+      let goodsList = []
+      this.checkedState.forEach((state, index) => {
+        if (state) {
+          goodsList.push(this.cartList[index])
+        }
+      })
+      if (goodsList.length > 0) {
+        this.setCheckedList(goodsList)
+        this.$router.push('/checkout')
+      } else {
+        this.$notify({
+          title: '您还未选中商品',
+          message: '',
+          type: 'warning'
+        })
+      }
     },
     _initGoodsNum(cartlist) {
       for (let i = 0; i < cartlist.length; i++) {

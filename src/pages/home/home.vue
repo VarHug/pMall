@@ -22,8 +22,8 @@
         </ul>
       </div>
       <div class="list-box">
-        <ul class="list">
-          <li class="list-item" v-for="(item, index) in phoneList" :key="index">
+        <ul class="list" v-loading="loading1" element-loading-text="拼命加载中">
+          <li class="list-item" v-for="(item, index) in phoneList" :key="index" @click.stop="openGoodsDetail(item.pid)">
             <div class="pic"><img :src="item.image"></div>
             <h3 class="title">{{item.name}}</h3>
             <p class="desc">{{item.desc}}</p>
@@ -48,8 +48,8 @@
         </ul>
       </div>
       <div class="list-box">
-        <ul class="list">
-          <li class="list-item" v-for="(item, index) in otherList" :key="index">
+        <ul class="list" v-loading="loading2" element-loading-text="拼命加载中">
+          <li class="list-item" v-for="(item, index) in otherList" :key="index" @click.stop="openGoodsDetail(item.pid)">
             <div class="pic"><img :src="item.image"></div>
             <h3 class="title">{{item.name}}</h3>
             <p class="desc">{{item.desc}}</p>
@@ -69,10 +69,15 @@ export default {
     return {
       sliderData: [],
       phoneList: [],
-      otherList: []
+      otherList: [],
+      loading1: true,
+      loading2: true
     }
   },
   methods: {
+    openGoodsDetail(productId) {
+      this.$router.push(`/goodsDetail?productId=${productId}`)
+    },
     _loadSliderData() {
       return [
         {
@@ -106,8 +111,11 @@ export default {
       this.$axios.get('/api/good', {
         params: param
       }).then(res => {
+        console.log(res)
         if (res.data.status === ERR_OK) {
           this.phoneList = this._formatData(res.data.result.list)
+          console.log(this.phoneList)
+          this.loading1 = false
         }
       })
     },
@@ -122,6 +130,7 @@ export default {
       }).then(res => {
         if (res.data.status === ERR_OK) {
           this.otherList = this._formatData(res.data.result.list)
+          this.loading2 = false
         }
       })
     },
@@ -133,6 +142,7 @@ export default {
         product.price = element.pPrice
         product.desc = element.pTitle
         product.image = element.category[0].picN7
+        product.pid = element.pid
         ret.push(product)
       })
       return ret
@@ -215,6 +225,7 @@ export default {
           margin-right 2%
           background #fff
           transition all .5s
+          cursor pointer
           &:hover
             transform translateY(-3px)
             box-shadow 1px 1px 20px #ffa1b8

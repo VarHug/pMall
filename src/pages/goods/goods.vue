@@ -32,7 +32,8 @@ export default {
       pageSizes: [10, 20, 40, 80],
       pageSize: 10,
       currentPage: 1,
-      type: 0
+      type: 0,
+      queryString: ''
     }
   },
   methods: {
@@ -55,7 +56,8 @@ export default {
       let param = {
         page: this.currentPage,
         pageSize: this.pageSize,
-        type: this.type
+        type: this.type,
+        queryString: this.queryString
       }
       this.$axios.get('/api/good', {
         params: param
@@ -87,6 +89,7 @@ export default {
   watch: {
     '$route' (to, from) {
       this.type = to.query.type ? parseInt(to.query.type) : 0
+      this.queryString = to.query.queryString || ''
       this.currentPage = 1
       this._getGoodsList()
     }

@@ -111,10 +111,8 @@ export default {
       this.$axios.get('/api/good', {
         params: param
       }).then(res => {
-        console.log(res)
         if (res.data.status === ERR_OK) {
           this.phoneList = this._formatData(res.data.result.list)
-          console.log(this.phoneList)
           this.loading1 = false
         }
       })

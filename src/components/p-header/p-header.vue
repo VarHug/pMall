@@ -13,7 +13,7 @@
             placeholder="请输入商品信息"
             :trigger-on-focus="false"
             @select="handleSelect">
-            <el-button slot="append" icon="el-icon-search"></el-button>
+            <el-button slot="append" icon="el-icon-search" @click.stop="toGoods"></el-button>
           </el-autocomplete>
           <div class="aside">
             <div class="user" @click="login">
@@ -89,7 +89,8 @@ export default {
     return {
       restaurants: [],
       input: '',
-      pageId: 0
+      pageId: 0,
+      searchString: ''
     }
   },
   computed: {
@@ -137,18 +138,20 @@ export default {
       }
     },
     querySearch(queryString, cb) {
-      var restaurants = this.restaurants
-      var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants
-      // 调用 callback 返回建议列表的数据
-      cb(results)
+      this.searchString = queryString
+      this._loadSearch(queryString).then(res => {
+        let restaurants = this.formatRestaurants(res.list)
+        cb(restaurants)
+      })
     },
-    createFilter(queryString) {
-      return (restaurant) => {
-        return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0)
-      }
-    },
+    // 点击输入建议
     handleSelect(item) {
-      console.log(item)
+      this.$router.push(`/goodsDetail?productId=${item.pid}`)
+    },
+    // 搜索指定商品
+    toGoods() {
+      this.pageId = 1
+      this.$router.push(`/goods?queryString=${this.searchString}`)
     },
     // 登录
     login() {
@@ -178,14 +181,36 @@ export default {
         this.$router.push('/login')
       }
     },
-    loadAll() {
-      return [
-        {value: '小米6'},
-        {value: 'iPhoneX'}
-      ]
-    },
     deleteGood(pid) {
       this.removeCartList(pid)
+    },
+    _loadSearch(queryString) {
+      return new Promise((resolve, reject) => {
+        let param = {
+          page: 1,
+          pageSize: 7,
+          queryString
+        }
+        this.$axios.get('/api/good', {
+          params: param
+        }).then(res => {
+          if (res.data.status === ERR_OK) {
+            resolve(res.data.result)
+          } else {
+            reject(res.data.msg)
+          }
+        })
+      })
+    },
+    formatRestaurants(list) {
+      let ret = []
+      list.forEach(item => {
+        let restaurant = {}
+        restaurant.value = item.pName
+        restaurant.pid = item.pid
+        ret.push(restaurant)
+      })
+      return ret
     },
     _initPageId() {
       switch (this.$route.fullPath) {
@@ -224,7 +249,6 @@ export default {
     this._initCartList()
   },
   mounted() {
-    this.restaurants = this.loadAll()
     this._initPageId()
   }
 }

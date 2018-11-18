@@ -135,7 +135,8 @@ export default {
           name: product.pName,
           price: product.pPrice,
           image: product.preview[0].small,
-          num: this.num
+          num: this.num,
+          isChecked: false
         }
         this.saveCartList(goodInfo)
       }

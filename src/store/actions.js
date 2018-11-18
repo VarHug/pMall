@@ -26,6 +26,29 @@ export const saveCartList = function ({commit, state}, goodInfo) {
   }
 }
 
+export /**
+ *
+ * @param {*} {commit, state}
+ * @param {Array} states {pid: state}
+ */
+const setCheckedState = function ({commit, state}, states) {
+  if (state.isLogin) {
+    let uid = state.user.uid || ''
+    let param = {
+      uid,
+      states: JSON.stringify(states)
+    }
+    axios.get('/api/user/setCheckedState', {
+      params: param
+    }).then(res => {
+      if (res.data.status === ERR_OK) {
+        let cartList = res.data.result.cartList
+        commit(types.SET_CART_LIST, cartList)
+      }
+    })
+  }
+}
+
 export const removeCartList = function ({commit, state}, productId) {
   if (state.isLogin) {
     let uid = state.user.uid || ''
@@ -43,6 +66,24 @@ export const removeCartList = function ({commit, state}, productId) {
     })
   } else {
     commit(types.SET_CART_LIST, removeGood(productId))
+  }
+}
+
+export const deleteCheckedGoods = function ({commit, state}, goodsList) {
+  if (state.isLogin) {
+    let uid = state.user.uid || ''
+    let param = {
+      uid,
+      goodsList: JSON.stringify(goodsList)
+    }
+    axios.get('/api/user/deleteCheckedGoods', {
+      params: param
+    }).then(res => {
+      if (res.data.status === ERR_OK) {
+        let cartList = res.data.result.cartList
+        commit(types.SET_CART_LIST, cartList)
+      }
+    })
   }
 }
 

@@ -16,7 +16,12 @@
         <ul class="cart-list" v-if="cartList.length > 0">
           <el-row class="cli" v-for="(good, index) in cartList" :key="index">
             <el-col :span="1">
-              <el-checkbox class="checkbox cli-cbox" @change="handleCheckedGoodsChange" ref="checkGoods" v-model="checkedState[index]"></el-checkbox>
+              <el-checkbox
+              class="checkbox cli-cbox"
+              v-model="checkedState[index]"
+              @change="handleCheckedGoodsChange(index)"
+              ref="checkGoods">
+            </el-checkbox>
             </el-col>
             <el-col :span="11">
               <div class="good-item">
@@ -44,6 +49,9 @@
         </ul>
         <div class="cart-toolbar">
           <div class="options-box">
+            <div class="toolbar-left">
+              <div class="d-checked" @click.stop="deleteChecked">删除选中的商品</div>
+            </div>
             <div class="toolbar-right">
               <div class="btn-area">
                 <a class="submit-btn" href="javascript:void(0);" @click="toCheckout">去结算<b></b></a>
@@ -93,7 +101,9 @@ export default {
     ...mapActions([
       'saveCartList',
       'initCartList',
-      'removeCartList'
+      'removeCartList',
+      'deleteCheckedGoods',
+      'setCheckedState'
     ]),
     ...mapMutations({
       setCheckedList: 'SET_CHECKED_LIST'
@@ -102,30 +112,60 @@ export default {
       let regExp = /s54x54/
       return good.image.replace(regExp, 's80x80')
     },
+    // 全选
     handleCheckAllChange(val) {
       this.isCheckAll = val
+      let states = []
       for (let i = 0; i < this.cartList.length; i++) {
         this.checkedState[i] = val
+        let state = {}
+        state.pid = this.cartList[i].pid
+        state.isChecked = val
+        states.push(state)
       }
+      this.setCheckedState(states)
     },
-    handleCheckedGoodsChange(val) {
-      for (let i = 0; i < this.cartList.length; i++) {
+    // 单一商品选中状态改变
+    handleCheckedGoodsChange(index) {
+      // 判断是否全选
+      let flag = true
+      for (let i = 0; i < this.checkedState.length; i++) {
         if (!this.checkedState[i]) {
-          this.isCheckAll = false
-          return
+          flag = false
+          break
         }
       }
-      this.isCheckAll = true
+      this.isCheckAll = flag
+      // 提交checkedState
+      let states = []
+      let state = {}
+      state.pid = this.cartList[index].pid
+      state.isChecked = this.checkedState[index]
+      states.push(state)
+      this.setCheckedState(states)
     },
+    // 单一商品数量改变
     handleNumChange(index) {
+      // object深复制
       let goodInfo = JSON.parse(JSON.stringify(this.cartList[index]))
       // 新加入的数量
       goodInfo.num = this.goodsnum[index] - this.cartList[index].num
       this.saveCartList(goodInfo)
     },
     deleteGood(pid, index) {
-      this.goodsnum.splice(index, 1)
+      // 改变购物车
       this.removeCartList(pid)
+    },
+    deleteChecked() {
+      let goodsList = []
+      this.checkedState.forEach((state, index) => {
+        if (state) {
+          goodsList.push(this.cartList[index].pid)
+        }
+      })
+      // 清空数据绑定状态
+      // 改变购物车
+      this.deleteCheckedGoods(goodsList)
     },
     getCheckedTotalPrice() {
       let totalPrice = 0
@@ -165,7 +205,23 @@ export default {
         })
       }
     },
+    _initCheckedState(cartList) {
+      this.checkedState = []
+      for (let i = 0; i < cartList.length; i++) {
+        this.checkedState[i] = cartList[i].isChecked
+      }
+      // 判断是否全选
+      let flag = true
+      for (let i = 0; i < this.checkedState.length; i++) {
+        if (!this.checkedState[i]) {
+          flag = false
+          break
+        }
+      }
+      this.isCheckAll = flag
+    },
     _initGoodsNum(cartlist) {
+      this.goodsnum = []
       for (let i = 0; i < cartlist.length; i++) {
         this.goodsnum[i] = cartlist[i].num
       }
@@ -179,6 +235,7 @@ export default {
       }).then(res => {
         if (res.data.status === ERR_OK) {
           this.initCartList(res.data.result.cartList)
+          this._initCheckedState(this.cartList)
           this._initGoodsNum(this.cartList)
         }
       })
@@ -191,7 +248,16 @@ export default {
     if (!this.cartList.length) {
       this._initCartList()
     } else {
+      this._initCheckedState(this.cartList)
       this._initGoodsNum(this.cartList)
+    }
+  },
+  watch: {
+    cartList(newCartList, oldCartList) {
+      if (newCartList.length !== oldCartList.length) {
+        this._initCheckedState(newCartList)
+        this._initGoodsNum(newCartList)
+      }
     }
   },
   components: {
@@ -267,6 +333,20 @@ export default {
         .options-box
           position relative
           height 50px
+          /.toolbar-left
+            position absolute
+            top 0
+            left 0
+            width 400px
+            height 50px
+            .d-checked
+              display inline-block
+              margin 15px 0 0 20px
+              height 20px
+              line-height 20px
+              font-size $font-size-medium
+              color #FF4B6D
+              cursor pointer
           /.toolbar-right
             position absolute
             top -1px

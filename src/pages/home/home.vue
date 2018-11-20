@@ -210,6 +210,8 @@ export default {
           margin-bottom 10px
           height 300px
     .list-box
+      width 946px
+      height 610px
       .list
         margin-right -2%
         margin-bottom -10px

@@ -1,5 +1,8 @@
 <template>
   <div class="goods" v-if="goodsList.length">
+    <div class="sort">
+      <span class="txt" @click="changeSort">按价格排序<i :class="getSortIcon"></i></span>
+    </div>
     <ul class="gl" v-loading="loading" element-loading-text="拼命加载中">
       <li class="gl-item" v-for="(glItem, index) in goodsList" :key="index">
         <goods-item :glItem='glItem'></goods-item>
@@ -33,7 +36,19 @@ export default {
       pageSize: 10,
       currentPage: 1,
       type: 0,
-      queryString: ''
+      queryString: '',
+      sort: 0
+    }
+  },
+  computed: {
+    getSortIcon() {
+      if (this.sort === 0) {
+        return 'el-icon-sort'
+      } else if (this.sort === -1) {
+        return 'el-icon-sort-down'
+      } else {
+        return 'el-icon-sort-up'
+      }
     }
   },
   methods: {
@@ -50,6 +65,16 @@ export default {
       this.$route.query.pageSize = this.pageSize
       this._getGoodsList()
     },
+    changeSort() {
+      if (this.sort === 1) {
+        this.sort = -1
+      } else {
+        this.sort = 1
+      }
+      this.currentPage = 1
+      this.loading = true
+      this._getGoodsList()
+    },
     _getGoodsList() {
       // 滚动回商品列表起始处
       this._scrollToGl()
@@ -57,7 +82,8 @@ export default {
         page: this.currentPage,
         pageSize: this.pageSize,
         type: this.type,
-        queryString: this.queryString
+        queryString: this.queryString,
+        sort: this.sort
       }
       this.$axios.get('/api/good', {
         params: param
@@ -105,8 +131,15 @@ export default {
 .goods
   padding-bottom 70px
   overflow hidden
+  .sort
+    padding 10px 5px 5px
+    .txt
+      font-size 14px
+      cursor pointer
+      i
+        padding-left 5px
   .gl
-    margin-top 20px
+    margin-top 10px
     font-size 0
     .gl-item
       display inline-block

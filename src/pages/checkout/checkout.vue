@@ -63,7 +63,7 @@
             </div>
             <div class="toolbar-right">
               <div class="btn-area">
-                <a class="submit-btn" href="javascript:void(0);">提交订单</a>
+                <a class="submit-btn" href="javascript:void(0);" @click="submitOrder">提交订单</a>
               </div>
               <div class="price-sum">
                 <span class="txt">总价：</span>
@@ -179,6 +179,21 @@ export default {
         totalNum += good.num
       })
       return totalNum
+    },
+    submitOrder() {
+      if (this.checked > -1) {
+        this.$notify({
+          title: '成功',
+          message: '订单已提交，但是并不会发货',
+          type: 'success'
+        })
+      } else {
+        this.$notify({
+          title: '失败',
+          message: '您还未选择收获地址',
+          type: 'error'
+        })
+      }
     },
     _getAddress() {
       let param = {

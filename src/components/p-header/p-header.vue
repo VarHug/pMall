@@ -13,8 +13,8 @@
             placeholder="请输入商品信息"
             :trigger-on-focus="false"
             @select="handleSelect">
-            <el-button slot="append" icon="el-icon-search" @click.stop="toGoods"></el-button>
           </el-autocomplete>
+          <div class="search-btn" @click="toGoods"><i class="el-icon-search"></i></div>
           <div class="aside">
             <div class="user" @click="login">
               <i class="icon-mine"></i>
@@ -272,11 +272,24 @@ export default {
       width 144px
       font-size 0
     .header-right
+      position relative
       float right
       .search, .aside
         vertical-align middle
       .search
         width 305px
+      .search-btn
+        position absolute
+        top 9px
+        left 250px
+        border-left 1px solid #dcdfe6
+        width 50px
+        height 38px
+        text-align center
+        line-height 38px
+        font-size 20px
+        background #fff
+        cursor pointer
       .aside
         display inline-block
         font-size 0

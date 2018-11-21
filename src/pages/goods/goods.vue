@@ -110,6 +110,7 @@ export default {
   },
   created() {
     this.type = this.$route.query.type ? parseInt(this.$route.query.type) : 0
+    this.queryString = this.$route.query.queryString || ''
     this._getGoodsList()
   },
   watch: {

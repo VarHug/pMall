@@ -48,7 +48,7 @@
       @after-enter='afterEnter'>
       <div class="animation-wrap" v-if="isAnimation">
         <div class="animation-inner">
-          <img src="//img10.360buyimg.com/n1/s450x450_jfs/t8287/299/1334040710/28963/780fbd17/59b857feN9690dbe6.jpg">
+          <img :src="product.category[0].picN7">
         </div>
       </div>
     </transition>
@@ -185,6 +185,12 @@ export default {
       for (let i = 0; i <= diff; i++) {
         this.scrollPos.push(-i * (LH_ITEM_WIDTH + LH_ITEM_MARGIN))
       }
+    }
+  },
+  watch: {
+    '$route' (to, from) {
+      this.productId = to.query.productId
+      this._getGoodDetail()
     }
   },
   created() {
